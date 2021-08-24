@@ -9,42 +9,34 @@ func _ready():
 	pass
 
 func _physics_process(delta):
-	#taking input from user
-
-	#forwars and backwards movement
-	#when both w and s are pressed
-	if Input.is_action_pressed("Up") and Input.is_action_pressed("Down"):
+	if Input.is_action_pressed("ui_left") and Input.is_action_pressed("ui_right"):
+		velocity.x = 0
+	elif Input.is_action_pressed("ui_right"):
+		velocity.x = speed
+		$MeshInstance.rotate_z(deg2rad(-8))
+	elif Input.is_action_pressed("ui_left"):
+		$MeshInstance.rotate_z(deg2rad(8))
+		velocity.x = -speed
+	else:
+		velocity.x = lerp(velocity.x,0,0.1)
+	
+	if Input.is_action_pressed("ui_down") and Input.is_action_pressed("ui_up"):
 		velocity.z = 0
-	#when w us pressed alone
-	elif Input.is_action_pressed("Up"):
+	elif Input.is_action_pressed("ui_up"):
+		$MeshInstance.rotate_x(deg2rad(-8))
 		velocity.z = -speed
-	#when s is pressed alone
-	elif Input.is_action_pressed("Down"):
+	elif Input.is_action_pressed("ui_down"):
+		$MeshInstance.rotate_x(deg2rad(8))
 		velocity.z = speed
-	#when both w and s is not pressed
 	else:
 		velocity.z = lerp(velocity.z,0,0.1)
 	
-	#left and right movement
-	#when bot a and d is pressed
-	if Input.is_action_pressed("Left") and Input.is_action_pressed("Right"):
-		velocity.x = 0
-	#when a is pressed
-	if Input.is_action_pressed("Left"):
-		velocity.x = -speed
-	#when d is pressed
-	if Input.is_action_pressed("Right"):
-		velocity.x = speed
-	#when both a and d is not pressed
+	if Input.is_action_just_pressed("ui_select"):
+		if is_on_floor() == true:
+			velocity.y = 18
 	else:
-		velocity.x = lerp(velocity.z,0,0.1)
-
-	#gravity exists
-	#jump module
-	#is space is pressed and if player is on the floor
-	if Input.is_action_pressed("Jump") and is_on_floor() == true:
-		velocity.y = 18#players position on y will be changes
-	else:#player will be pulled back to the ground
 		velocity.y -= gravity *delta
+		
+	move_and_slide(velocity, Vector3.UP)
 	
 	
